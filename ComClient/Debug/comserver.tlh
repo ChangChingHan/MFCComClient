@@ -1,0 +1,71 @@
+﻿// Created by Microsoft (R) C/C++ Compiler Version 15.00.30729.01 (829f7f21).
+//
+// d:\lynn-test\comobject\comclient\comclient\debug\comserver.tlh
+//
+// C++ source equivalent of Win32 type library D:\\Lynn-Test\\ComObject\\ComServer\\ComServer\\Debug\\ComServer.tlb
+// compiler-generated file created 07/01/14 at 10:18:23 - DO NOT EDIT!
+
+#pragma once
+#pragma pack(push, 8)
+
+#include <comdef.h>
+
+//
+// Forward references and typedefs
+//
+
+struct __declspec(uuid("25c35e63-4ed5-485d-892c-83236f7f6039"))
+/* LIBID */ __ComServerLib;
+struct __declspec(uuid("ec42ce68-e7a6-45ac-b6e5-362e7d5b3f6a"))
+/* dispinterface */ _IDataMgrEvents;
+struct /* coclass */ DataMgr;
+struct __declspec(uuid("8f7ddf6b-4907-45d9-8769-706f800d924c"))
+/* dual interface */ IDataMgr;
+
+//
+// Smart pointer typedef declarations
+//
+
+_COM_SMARTPTR_TYPEDEF(_IDataMgrEvents, __uuidof(_IDataMgrEvents));
+_COM_SMARTPTR_TYPEDEF(IDataMgr, __uuidof(IDataMgr));
+
+//
+// Type library items
+//
+
+struct __declspec(uuid("ec42ce68-e7a6-45ac-b6e5-362e7d5b3f6a"))
+_IDataMgrEvents : IDispatch
+{};
+
+struct __declspec(uuid("bccb259a-648c-46d8-80ec-f354dfe7b55b"))
+DataMgr;
+    // [ default ] interface IDataMgr
+    // [ default, source ] dispinterface _IDataMgrEvents
+
+struct __declspec(uuid("8f7ddf6b-4907-45d9-8769-706f800d924c"))
+IDataMgr : IDispatch
+{
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall QueryFromDC (
+        /*[in]*/ unsigned char bDataType,
+        /*[in]*/ unsigned char bOperation,
+        /*[in,out]*/ VARIANT * VarData ) = 0;
+};
+
+//
+// Named GUID constants initializations
+//
+
+extern "C" const GUID __declspec(selectany) LIBID_ComServerLib =
+    {0x25c35e63,0x4ed5,0x485d,{0x89,0x2c,0x83,0x23,0x6f,0x7f,0x60,0x39}};
+extern "C" const GUID __declspec(selectany) DIID__IDataMgrEvents =
+    {0xec42ce68,0xe7a6,0x45ac,{0xb6,0xe5,0x36,0x2e,0x7d,0x5b,0x3f,0x6a}};
+extern "C" const GUID __declspec(selectany) CLSID_DataMgr =
+    {0xbccb259a,0x648c,0x46d8,{0x80,0xec,0xf3,0x54,0xdf,0xe7,0xb5,0x5b}};
+extern "C" const GUID __declspec(selectany) IID_IDataMgr =
+    {0x8f7ddf6b,0x4907,0x45d9,{0x87,0x69,0x70,0x6f,0x80,0x0d,0x92,0x4c}};
+
+#pragma pack(pop)
