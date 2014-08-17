@@ -1,12 +1,61 @@
 #include "StdAfx.h"
 #include "DataCeneter.h"
 
+#define DEVICE_INI			_T(".\\device.ini")
+#define STRING_INI_BUFFER	128
+#define SECTION_URL			_T("URL")
+
+
 CDataCeneter::CDataCeneter(void)
 {
+	InitialDeviceIni();
 }
 
 CDataCeneter::~CDataCeneter(void)
 {
+	map<int, CString>::iterator it = m_mapDeviceURL.begin();
+	while (it != m_mapDeviceURL.end())
+	{
+		WritetDeviceURL(it->first,it->second);
+		it++;
+	}
+}
+
+void CDataCeneter::InitialDeviceIni()
+{
+	CSimpleArray<camera> Array;
+	m_dataMgr.QueryFromDC(DATABASE,GET_CAM,(VARIANT*)&Array);
+
+	CString strKey(_T(""));
+	CString strURL;
+	LPTSTR pstr = strURL.GetBuffer(STRING_INI_BUFFER);
+
+
+	int nIdx = 0, nCount = 1;
+	for (nIdx = 0; nIdx < nCount; nIdx++)
+	{
+		if (Array[nIdx].isURL == true)
+		{
+			GetDeviceURL(Array[nIdx].cameraid, pstr);
+			m_mapDeviceURL[Array[nIdx].cameraid] = CString(pstr);
+		}
+	}
+	strURL.ReleaseBuffer();
+}
+
+void CDataCeneter::WritetDeviceURL(int nDeviceId, CString& strURL)
+{
+	CString strKey(_T(""));
+	strKey.Format(_T("cam%d"),nDeviceId);
+	WritePrivateProfileString( SECTION_URL , strKey , strURL , DEVICE_INI );
+}
+
+void CDataCeneter::GetDeviceURL(int nDeviceId, LPTSTR pstr)
+{
+	CString strKey(_T(""));
+
+	strKey.Format(_T("cam%d"),nDeviceId);
+	GetPrivateProfileString( SECTION_URL , strKey , _T("") , pstr , STRING_INI_BUFFER , DEVICE_INI );
 }
 
 void CDataCeneter::QueryFromDC(unsigned char bDataType, unsigned char bOperation, LPVOID VarData)
@@ -16,6 +65,12 @@ void CDataCeneter::QueryFromDC(unsigned char bDataType, unsigned char bOperation
 	case DATABASE:
 		{
 			DatabaseOperation(bOperation, VarData);
+		}
+		break;
+
+	case REG_TBL:
+		{
+			RegtblOperation(bOperation, VarData);
 		}
 		break;
 	default:
@@ -101,6 +156,22 @@ void CDataCeneter::DeleteDatabase(BYTE bOperation, void* VarData)
 void CDataCeneter::DeleteCamTbl(BYTE bOperation, LPVOID VarData)
 {
 	InsertCamTbl(bOperation, VarData, FALSE);
+	
+	map<int, CString>::iterator it;
+	vector<ec_Camera> *pArray = (vector<ec_Camera>*)VarData;
+	int nIdx = 0, nCount = pArray->size();
+
+	for (nIdx = 0; nIdx < nCount; nIdx++)
+	{
+		if ((*pArray)[nIdx].isURL)
+		{
+			it = m_mapDeviceURL.find((*pArray)[nIdx].cameraid);
+			if (it != m_mapDeviceURL.end())
+			{
+				m_mapDeviceURL.erase(it);
+			}
+		}
+	}
 }
 
 void CDataCeneter::DeleteStreamTbl(BYTE bOperation, LPVOID VarData)
@@ -198,6 +269,12 @@ void CDataCeneter::InsertCamTbl(BYTE bOperation, LPVOID VarData, BOOL bInserStre
 
 	for (nIdx = 0; nIdx < nCount; nIdx++)
 	{
+		if (IsURLAddress((*pArray)[nIdx].ipaddress))
+		{
+			data.isURL = true;
+			m_mapDeviceURL[(*pArray)[nIdx].cameraid] = (*pArray)[nIdx].ipaddress;
+		}
+
 		data.cameraid = (*pArray)[nIdx].cameraid;
 		data.camera_idx = (*pArray)[nIdx].camera_idx;
 		data.cameraname = (*pArray)[nIdx].cameraname;
@@ -369,9 +446,18 @@ void CDataCeneter::QueryCamTbl(BYTE bOperation, LPVOID VarData)
 	ec_Camera data;
 	vector<ec_Camera> *pArray = (vector<ec_Camera>*)VarData;
 	nCount = Array.GetSize();
+	map<int,CString>::iterator it;
 	for (nIdx = 0; nIdx < nCount; nIdx++)
 	{
 		data = Array[nIdx];
+		if (data.isURL)
+		{
+			it = m_mapDeviceURL.find(data.cameraid);
+			if (it != m_mapDeviceURL.end())
+			{
+				data.ipaddress = it->second;
+			}
+		}
 		pArray->push_back(data);
 	}
 }
@@ -470,4 +556,39 @@ void CDataCeneter::QueryParamTbl(BYTE bOperation, LPVOID VarData)
 		data = Array[nIdx];
 		pArray->push_back(data);
 	}
+}
+
+bool CDataCeneter::IsURLAddress(CString& strAddress)
+{
+	bool bURLAddress = true;
+	USES_CONVERSION;
+	string stringAddress = W2A(strAddress);
+
+	char *buffer = new char[stringAddress.length()+1];
+	strcpy_s(buffer, stringAddress.length()+1, stringAddress.c_str());
+	char *pch = NULL, *pbuffer = NULL;
+	vector<string> vcString;
+
+	pch = strtok_s(buffer,".",&pbuffer);
+	while(pch != NULL)
+	{
+		vcString.push_back(pch);
+		pch = strtok_s(NULL,".",&pbuffer);
+	}
+	delete [] buffer;
+
+	if (vcString.size() == 4)
+	{
+		int a = atoi(vcString[0].c_str());
+		int b = atoi(vcString[1].c_str());
+		int c = atoi(vcString[2].c_str());
+		int d = atoi(vcString[3].c_str());
+
+		if (a && b && c && d && 
+			a<=255 && b<=255 && c<=255 && d<=255)
+		{
+			bURLAddress = false;
+		}
+	}
+	return bURLAddress;
 }

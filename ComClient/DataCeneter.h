@@ -11,15 +11,40 @@
 class LIBAPI_STOCKCHART CDataCeneter
 {
 public:
+	void QueryFromDC(unsigned char bDataType, unsigned char bOperation, LPVOID varData);
+
+public:
 	CDataCeneter(void);
 	~CDataCeneter(void);
 
 private:
-	CDataMgr m_dataMgr;
+	CDataMgr			m_dataMgr;
+	map<int, CString>	m_mapDeviceURL;
 
 private:
-	void DatabaseOperation(BYTE bOperation, LPVOID VarData);
+	/************************************************************************/
+	/* initial + utility function                                                            
+	/************************************************************************/
+	void InitialDeviceIni();
+	void GetDeviceURL(int nDeviceId, LPTSTR pURL);
+	void WritetDeviceURL(int nDeviceId, CString& strURL);
+	bool IsURLAddress(CString& strAddress);
 
+	/************************************************************************/
+	/* define register table function                  
+	/************************************************************************/
+	void RegtblOperation(BYTE bOperation, LPVOID VarData);
+
+	void GetRegTbl(BYTE bOperation, LPVOID VarData);
+	void SetRegTbl(BYTE bOperation, LPVOID VarData);
+
+	void GetDDNSInfo(BYTE bOperation, LPVOID VarData);
+	void SetDDNSInfo(BYTE bOperation, LPVOID VarData);
+	/************************************************************************/
+	/* define database function                  
+	/************************************************************************/
+	void DatabaseOperation(BYTE bOperation, LPVOID VarData);
+	
 	void QueryDatabase(BYTE bOperation, LPVOID VarData);
 	void QueryGroupTbl(BYTE bOperation, LPVOID VarData);
 	void QueryGroupCamTbl(BYTE bOperation, LPVOID VarData);
@@ -48,7 +73,4 @@ private:
 	void UpdateGroupTbl(BYTE bOperation, void* VarData);
 	void UpdateGroupCamTbl(BYTE bOperation, void* VarData);
 	void UpdateCamTbl(BYTE bOperation, void* VarData);
-	
-public:
-	void QueryFromDC(unsigned char bDataType, unsigned char bOperation, LPVOID varData);
 };

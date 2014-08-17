@@ -45,7 +45,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;D:\Lynn-Test\ComObject\ComClient\ComClient\Include&quot;"
+				AdditionalIncludeDirectories="N:\Include"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;IMPL_STOCKCHART"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -95,7 +95,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy ..\debug\ComClient.dll  &quot;D:\EtroCenter\1.2.5.0\Etrocenter\Bin&quot;&#x0D;&#x0A;copy ..\debug\ComClient.lib  &quot;D:\EtroCenter\1.2.5.0\Etrocenter\Src\eNVR(DC)\lib&quot;&#x0D;&#x0A;copy .\CDataMgr.h  &quot;D:\EtroCenter\1.2.5.0\Etrocenter\Src\eNVR(DC)\include&quot;&#x0D;&#x0A;copy .\DataCeneter.h  &quot;D:\EtroCenter\1.2.5.0\Etrocenter\Src\eNVR(DC)\include&quot;&#x0D;&#x0A;copy .\DataCeneter.h  &quot;D:\Lynn-Test\ComObject\ComClient(Dlg)\ComClient\include&quot;&#x0D;&#x0A;copy .\CDataMgr.h  &quot;D:\Lynn-Test\ComObject\ComClient(Dlg)\ComClient\include&quot;&#x0D;&#x0A;copy ..\debug\ComClient.dll  &quot;D:\Lynn-Test\ComObject\ComClient(Dlg)\Debug&quot;&#x0D;&#x0A;copy ..\debug\ComClient.lib  &quot;D:\Lynn-Test\ComObject\ComClient(Dlg)\ComClient\lib&quot;&#x0D;&#x0A;"
+				CommandLine="copy ..\debug\ComClient.lib  &quot;N:\Lib\x86&quot;&#x0D;&#x0A;copy .\CDataMgr.h  &quot;N:\Include&quot;&#x0D;&#x0A;copy .\DataCeneter.h  &quot;N:\Include&quot;&#x0D;&#x0A;copy .\CDataMgr.h  &quot;N:\Include&quot;"
 			/>
 		</Configuration>
 		<Configuration
@@ -221,6 +221,10 @@
 						CompileAsManaged="0"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\RegTable.cpp"
+				>
 			</File>
 			<File
 				RelativePath=".\stdafx.cpp"
