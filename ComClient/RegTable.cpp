@@ -36,7 +36,7 @@ void CDataCeneter::GetDDNSInfo(BYTE bOperation, LPVOID VarData)
 {
 	struDDNS *pDDNSData = (struDDNS*)VarData;
 	
-	ULONG ulChars = 0;
+	ULONG ulChars = 1024;
 	CRegKey regKey;
 	if( regKey.Open(HKEY_LOCAL_MACHINE, REGISTSUBFOLDER) == ERROR_SUCCESS)
 	{

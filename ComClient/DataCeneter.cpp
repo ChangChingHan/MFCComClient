@@ -31,13 +31,13 @@ void CDataCeneter::InitialDeviceIni()
 	LPTSTR pstr = strURL.GetBuffer(STRING_INI_BUFFER);
 
 
-	int nIdx = 0, nCount = 1;
+	int nIdx = 0, nCount = Array.GetSize();
 	for (nIdx = 0; nIdx < nCount; nIdx++)
 	{
-		if (Array[nIdx].isURL == true)
+		if (Array[nIdx].isURL)
 		{
-			GetDeviceURL(Array[nIdx].cameraid, pstr);
-			m_mapDeviceURL[Array[nIdx].cameraid] = CString(pstr);
+			GetDeviceURL(Array[nIdx].camera_idx, pstr);
+			m_mapDeviceURL[Array[nIdx].camera_idx] = CString(pstr);
 		}
 	}
 	strURL.ReleaseBuffer();
@@ -165,7 +165,7 @@ void CDataCeneter::DeleteCamTbl(BYTE bOperation, LPVOID VarData)
 	{
 		if ((*pArray)[nIdx].isURL)
 		{
-			it = m_mapDeviceURL.find((*pArray)[nIdx].cameraid);
+			it = m_mapDeviceURL.find((*pArray)[nIdx].camera_idx);
 			if (it != m_mapDeviceURL.end())
 			{
 				m_mapDeviceURL.erase(it);
@@ -269,12 +269,6 @@ void CDataCeneter::InsertCamTbl(BYTE bOperation, LPVOID VarData, BOOL bInserStre
 
 	for (nIdx = 0; nIdx < nCount; nIdx++)
 	{
-		if (IsURLAddress((*pArray)[nIdx].ipaddress))
-		{
-			data.isURL = true;
-			m_mapDeviceURL[(*pArray)[nIdx].cameraid] = (*pArray)[nIdx].ipaddress;
-		}
-
 		data.cameraid = (*pArray)[nIdx].cameraid;
 		data.camera_idx = (*pArray)[nIdx].camera_idx;
 		data.cameraname = (*pArray)[nIdx].cameraname;
@@ -302,6 +296,13 @@ void CDataCeneter::InsertCamTbl(BYTE bOperation, LPVOID VarData, BOOL bInserStre
 		data.subnet_mask4 = (*pArray)[nIdx].subnet_mask4;
 		data.active_ = (*pArray)[nIdx].active_;
 		data.stream_url = (*pArray)[nIdx].stream_url;
+
+		if (bOperation == INSERT_CAM && IsURLAddress((*pArray)[nIdx].ipaddress))
+		{
+			data.isURL = true;
+			data.ipaddress.clear();
+			m_mapDeviceURL[(*pArray)[nIdx].camera_idx] = (*pArray)[nIdx].ipaddress;
+		}
 
 		Array.Add(data);
 		m_dataMgr.QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
@@ -452,7 +453,7 @@ void CDataCeneter::QueryCamTbl(BYTE bOperation, LPVOID VarData)
 		data = Array[nIdx];
 		if (data.isURL)
 		{
-			it = m_mapDeviceURL.find(data.cameraid);
+			it = m_mapDeviceURL.find(data.camera_idx);
 			if (it != m_mapDeviceURL.end())
 			{
 				data.ipaddress = it->second;
