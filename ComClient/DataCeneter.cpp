@@ -80,19 +80,19 @@ void CDataCeneter::QueryFromDC(unsigned char bDataType, unsigned char bOperation
 
 void CDataCeneter::DatabaseOperation(BYTE bOperation, LPVOID VarData)
 {
-	if (bOperation >= GET_GROUP && bOperation <= GET_PARAM)
+	if (bOperation >= GET_GROUP && bOperation <= GET_EVENT_ACTION)
 	{
 		QueryDatabase(bOperation, VarData);
 	}
-	else if (bOperation >= INSERT_GROUP && bOperation <= INSERT_STREAM)
+	else if (bOperation >= INSERT_GROUP && bOperation <= INSERT_EVENT_ACTION)
 	{
 		InsertDatabase(bOperation, VarData);
 	}
-	else if(bOperation >= DELETE_GROUP_BY_DEVICE && bOperation <= DELETE_RECORD_TIME_BY_ID)
+	else if(bOperation >= DELETE_GROUP_BY_DEVICE && bOperation <= DELETE_EVENT_ACTION)
 	{
 		DeleteDatabase(bOperation, VarData);
 	}
-	else if(bOperation >= UPDATE_GROUP_BY_ID && bOperation <= UPDATE_STREAM)
+	else if(bOperation >= UPDATE_GROUP_BY_ID && bOperation <= UPDATE_EVENT_ACTION)
 	{
 		UpdateDatabase(bOperation, VarData);
 	}
@@ -112,6 +112,15 @@ void CDataCeneter::UpdateDatabase(BYTE bOperation, void* VarData)
 	{
 		UpdateCamTbl(bOperation, VarData);
 	}
+	else if (bOperation >= UPDATE_EVENT_ACTION && bOperation <= UPDATE_EVENT_ACTION)
+	{
+		UpdateEventActionTbl(bOperation, VarData);
+	}
+}
+
+void CDataCeneter::UpdateEventActionTbl(BYTE bOperation, void* VarData)
+{
+
 }
 
 void CDataCeneter::UpdateGroupTbl(BYTE bOperation, void* VarData)
@@ -151,6 +160,15 @@ void CDataCeneter::DeleteDatabase(BYTE bOperation, void* VarData)
 	{
 		DeleteRecordTbl(bOperation, VarData);
 	}
+	else if (bOperation >= DELETE_EVENT_ACTION && bOperation <= DELETE_EVENT_ACTION)
+	{
+		DeleteEventActionTbl(bOperation, VarData);
+	}
+}
+
+void CDataCeneter::DeleteEventActionTbl(BYTE bOperation, LPVOID VarData)
+{
+
 }
 
 void CDataCeneter::DeleteCamTbl(BYTE bOperation, LPVOID VarData)
@@ -216,6 +234,14 @@ void CDataCeneter::InsertDatabase(BYTE bOperation, void* VarData)
 	{
 		InsertStreamTbl(bOperation, VarData);
 	}
+	else if (bOperation == INSERT_EVENT_ACTION)
+	{
+		InsertEventActionTbl(bOperation, VarData);
+	}
+}
+
+void CDataCeneter::InsertEventActionTbl(BYTE bOperation, LPVOID VarData)
+{
 }
 
 void CDataCeneter::InsertGroupCamTbl(BYTE bOperation, LPVOID VarData)
@@ -403,6 +429,14 @@ void CDataCeneter::QueryDatabase(BYTE bOperation, LPVOID VarData)
 	{
 		QueryParamTbl(bOperation, VarData);
 	}
+	else if (bOperation >= GET_EVENT_LOG && bOperation <= GET_EVENT_LOG)
+	{
+		QueryEventlogTbl(bOperation, VarData);
+	}
+	else if (bOperation >= GET_EVENT_ACTION && bOperation <= GET_EVENT_ACTION)
+	{
+		QueryEventActionTbl(bOperation, VarData);
+	}
 }
 
 void CDataCeneter::QueryGroupTbl(BYTE bOperation, LPVOID VarData)
@@ -533,6 +567,17 @@ void CDataCeneter::QueryStorageTbl(BYTE bOperation, LPVOID VarData)
 		pArray->push_back(data);
 	}
 }
+
+void CDataCeneter::QueryEventActionTbl(BYTE bOperation, LPVOID VarData)
+{
+	
+}
+
+void CDataCeneter::QueryEventlogTbl(BYTE bOperation, LPVOID VarData)
+{
+
+}
+
 void CDataCeneter::QueryParamTbl(BYTE bOperation, LPVOID VarData)
 {
 	int nIdx = 0, nCount = 0;

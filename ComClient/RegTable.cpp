@@ -6,11 +6,11 @@
 
 void CDataCeneter::RegtblOperation(BYTE bOperation, LPVOID VarData)
 {
-	if (bOperation >= GET_DDNS_INFO && bOperation <= GET_DDNS_INFO)
+	if (bOperation >= GET_DDNS_INFO && bOperation <= GET_EVENT_COLOR)
 	{
 		GetRegTbl(bOperation, VarData);
 	}
-	else if (bOperation >= SET_DDNS_INFO && bOperation <= SET_DDNS_INFO)
+	else if (bOperation >= SET_DDNS_INFO && bOperation <= SET_EVENT_COLOR)
 	{
 		SetRegTbl(bOperation, VarData);
 	}
@@ -22,6 +22,10 @@ void CDataCeneter::GetRegTbl(BYTE bOperation, LPVOID VarData)
 	{
 		GetDDNSInfo(bOperation, VarData);
 	}
+	else if (bOperation == GET_EVENT_COLOR)
+	{
+		GetEventColor(VarData);
+	}
 }
 
 void CDataCeneter::SetRegTbl(BYTE bOperation, LPVOID VarData)
@@ -29,6 +33,10 @@ void CDataCeneter::SetRegTbl(BYTE bOperation, LPVOID VarData)
 	if (bOperation == SET_DDNS_INFO)
 	{
 		SetDDNSInfo(bOperation, VarData);
+	}
+	if (bOperation == SET_EVENT_COLOR)
+	{
+		SetEventColor(VarData);
 	}
 }
 
@@ -66,4 +74,13 @@ void CDataCeneter::SetDDNSInfo(BYTE bOperation, LPVOID VarData)
 		regKey.SetDWORDValue(_T("IntervalTime"), pDDNSData->nIntervalTime);
 	}
 	regKey.Close();
+}
+void CDataCeneter::GetEventColor(LPVOID VarData)
+{
+	vector<strucEventColor> *pArray = (vector<strucEventColor>*)VarData;
+}
+
+void CDataCeneter::SetEventColor(LPVOID VarData)
+{
+	vector<strucEventColor> *pArray = (vector<strucEventColor>*)VarData;
 }

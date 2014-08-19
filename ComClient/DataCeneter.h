@@ -40,6 +40,9 @@ private:
 
 	void GetDDNSInfo(BYTE bOperation, LPVOID VarData);
 	void SetDDNSInfo(BYTE bOperation, LPVOID VarData);
+
+	void GetEventColor(LPVOID VarData);
+	void SetEventColor(LPVOID VarData);
 	/************************************************************************/
 	/* define database function                  
 	/************************************************************************/
@@ -53,6 +56,8 @@ private:
 	void QueryRecordTbl(BYTE bOperation, LPVOID VarData);
 	void QueryStorageTbl(BYTE bOperation, LPVOID VarData);
 	void QueryParamTbl(BYTE bOperation, LPVOID VarData);
+	void QueryEventlogTbl(BYTE bOperation, LPVOID VarData);
+	void QueryEventActionTbl(BYTE bOperation, LPVOID VarData);
 
 	void InsertDatabase(BYTE bOperation, void* VarData);
 	void InsertGroupTbl(BYTE bOperation, LPVOID VarData);
@@ -60,6 +65,7 @@ private:
 	void InsertRecordTbl(BYTE bOperation, LPVOID VarData);
 	void InsertGroupCamTbl(BYTE bOperation, LPVOID VarData);
 	void InsertStreamTbl(BYTE bOperation, LPVOID VarData);
+	void InsertEventActionTbl(BYTE bOperation, LPVOID VarData);
 	void PrepareInsertStreamTbl(vector<ec_Stream>& vcStream);
 
 	void DeleteDatabase(BYTE bOperation, void* VarData);
@@ -68,9 +74,11 @@ private:
 	void DeleteRecordTbl(BYTE bOperation, LPVOID VarData);
 	void DeleteCamTbl(BYTE bOperation, LPVOID VarData);
 	void DeleteStreamTbl(BYTE bOperation, LPVOID VarData);
+	void DeleteEventActionTbl(BYTE bOperation, LPVOID VarData);
 
 	void UpdateDatabase(BYTE bOperation, void* VarData);
 	void UpdateGroupTbl(BYTE bOperation, void* VarData);
 	void UpdateGroupCamTbl(BYTE bOperation, void* VarData);
 	void UpdateCamTbl(BYTE bOperation, void* VarData);
+	void UpdateEventActionTbl(BYTE bOperation, void* VarData);
 };
