@@ -29,8 +29,12 @@ private:
 	void GetDeviceURL(int nDeviceId, LPTSTR pURL);
 	void WritetDeviceURL(int nDeviceId, CString& strURL);
 	bool IsURLAddress(CString& strAddress);
-	void GetAllEventType(vector<EVENTTYPE>& vcEventType);
+	void GetInterEventType(vector< pair<EVENTTYPE,wstring> >& vcEventType);
+	void GetIntraEventType(vector< pair<EVENTTYPE,wstring> >& vcEventType);
 	void GetCamByMac(ec_Camera& cam, const wstring& strMac);
+
+	void GetEventActionDetail(vector<ec_Event_Action> *pArray);
+	void GetEventActionDetailFromFile(ec_Event_Action& eventAction);
 
 	/************************************************************************/
 	/* define register table function                  
@@ -43,8 +47,8 @@ private:
 	void GetDDNSInfo(BYTE bOperation, LPVOID VarData);
 	void SetDDNSInfo(BYTE bOperation, LPVOID VarData);
 
-	void GetEventColor(LPVOID VarData);
-	void SetEventColor(LPVOID VarData);
+	void GetEventType(BYTE bOperation, LPVOID VarData);
+	void SetEventType(BYTE bOperation, LPVOID VarData);
 	/************************************************************************/
 	/* define database function                  
 	/************************************************************************/

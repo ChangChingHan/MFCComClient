@@ -570,7 +570,57 @@ void CDataCeneter::QueryStorageTbl(BYTE bOperation, LPVOID VarData)
 
 void CDataCeneter::QueryEventActionTbl(BYTE bOperation, LPVOID VarData)
 {
-	
+	CSimpleArray<eventaction> Array;
+	vector<ec_Event_Action> *pArray = NULL;
+	pArray = (vector<ec_Event_Action>*)VarData;
+
+	m_dataMgr.QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
+	int nIdx = 0, nCount = Array.GetSize();
+	ec_Event_Action data;
+
+	for (nIdx = 0; nIdx < nCount; nIdx++)
+	{
+		data = Array[nIdx];
+		GetCamByMac(data.source_device, Array[nIdx].source_mac);
+		GetCamByMac(data.target_device, Array[nIdx].target_mac);
+
+		pArray->push_back(data);
+	}
+}
+
+void CDataCeneter::GetEventActionDetail(vector<ec_Event_Action> *pArray)
+{
+	int nIdx = 0, nCount = pArray->size();
+	 map<int,wstring> mapValue;
+
+	for (nIdx = 0; nIdx < nCount; nIdx++)
+	{
+		GetEventActionDetailFromFile((*pArray)[nIdx]);
+	}
+}
+
+void CDataCeneter::GetEventActionDetailFromFile(ec_Event_Action& eventAction)
+{
+	switch()
+	{
+	case ACTION_PTZ:
+		{
+
+		}
+		break;
+	case ACTION_EMAIL:
+		{
+
+		}
+		break;
+	case ACTION_CUSTOM:
+		{
+
+		}
+		break;
+	default:
+		break;
+	}
 }
 
 void CDataCeneter::QueryEventlogTbl(BYTE bOperation, LPVOID VarData)

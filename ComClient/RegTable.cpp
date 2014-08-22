@@ -7,11 +7,11 @@
 
 void CDataCeneter::RegtblOperation(BYTE bOperation, LPVOID VarData)
 {
-	if (bOperation >= GET_DDNS_INFO && bOperation <= GET_EVENT_COLOR)
+	if (bOperation >= GET_DDNS_INFO && bOperation <= GET_ALL_EVENT)
 	{
 		GetRegTbl(bOperation, VarData);
 	}
-	else if (bOperation >= SET_DDNS_INFO && bOperation <= SET_EVENT_COLOR)
+	else if (bOperation >= SET_DDNS_INFO && bOperation <= SET_EVENT_TYPE)
 	{
 		SetRegTbl(bOperation, VarData);
 	}
@@ -23,9 +23,9 @@ void CDataCeneter::GetRegTbl(BYTE bOperation, LPVOID VarData)
 	{
 		GetDDNSInfo(bOperation, VarData);
 	}
-	else if (bOperation == GET_EVENT_COLOR)
+	else if (bOperation >= GET_INTER_EVENT && bOperation <= GET_ALL_EVENT) 
 	{
-		GetEventColor(VarData);
+		GetEventType(bOperation, VarData);
 	}
 }
 
@@ -35,9 +35,9 @@ void CDataCeneter::SetRegTbl(BYTE bOperation, LPVOID VarData)
 	{
 		SetDDNSInfo(bOperation, VarData);
 	}
-	else if (bOperation == SET_EVENT_COLOR)
+	else if (bOperation == SET_EVENT_TYPE)
 	{
-		SetEventColor(VarData);
+		SetEventType(bOperation, VarData);
 	}
 }
 
@@ -76,35 +76,52 @@ void CDataCeneter::SetDDNSInfo(BYTE bOperation, LPVOID VarData)
 	}
 	regKey.Close();
 }
-void CDataCeneter::GetEventColor(LPVOID VarData)
+void CDataCeneter::GetEventType(BYTE bOperation, LPVOID VarData)
 {
 	CRegKey regKey;
 	CString str;
 	DWORD dValue = 0;
 	strucEventColor EventColorData;
-
 	vector<strucEventColor> *pArray = (vector<strucEventColor>*)VarData;
-	vector<EVENTTYPE> vcEventType;
-	GetAllEventType(vcEventType);
-	
-	if (regKey.Open(HKEY_LOCAL_MACHINE, REGIST_EVENT_LEVEL) == ERROR_SUCCESS)
+	vector<pair<EVENTTYPE,wstring> > vcEventType;
+
+	if (bOperation == GET_INTER_EVENT || bOperation == GET_ALL_EVENT)
 	{
-		int nIdx = 0, nCount = vcEventType.size();
-		for (nIdx=0 ; nIdx<nCount ; nIdx++)
+		vcEventType.clear();
+		GetInterEventType(vcEventType);
+		if (regKey.Open(HKEY_LOCAL_MACHINE, REGIST_EVENT_LEVEL) == ERROR_SUCCESS)
 		{
-			str.Format(_T("%d"),vcEventType[nIdx]);
-			if (regKey.QueryDWORDValue(str, (DWORD&)EventColorData.event_level) == ERROR_SUCCESS)
+			int nIdx = 0, nCount = vcEventType.size();
+			for (nIdx=0 ; nIdx<nCount ; nIdx++)
 			{
-				EventColorData.event_type = vcEventType[nIdx];
-				pArray->push_back(EventColorData);
+				str.Format(_T("%d"),vcEventType[nIdx]);
+				if (regKey.QueryDWORDValue(str, (DWORD&)EventColorData.event_level) == ERROR_SUCCESS)
+				{
+					EventColorData.event_type = vcEventType[nIdx].first;
+					EventColorData.event_name = vcEventType[nIdx].second;
+					pArray->push_back(EventColorData);
+				}
 			}
+			regKey.Close();
 		}
 	}
 
-	regKey.Close();
+	if (bOperation == GET_INTRA_EVENT || bOperation == GET_ALL_EVENT)
+	{
+		vcEventType.clear();
+		GetIntraEventType(vcEventType);
+		int nIdx = 0, nCount = vcEventType.size();
+		for (nIdx=0 ; nIdx<nCount ; nIdx++)
+		{
+			EventColorData.event_level = EVENT_SYSTEM;
+			EventColorData.event_type = vcEventType[nIdx].first;
+			EventColorData.event_name = vcEventType[nIdx].second;
+			pArray->push_back(EventColorData);
+		}
+	}
 }
 
-void CDataCeneter::SetEventColor(LPVOID VarData)
+void CDataCeneter::SetEventType(BYTE bOperation, LPVOID VarData)
 {
 	vector<strucEventColor> *pArray = (vector<strucEventColor>*)VarData;
 
@@ -125,24 +142,64 @@ void CDataCeneter::SetEventColor(LPVOID VarData)
 			regKey.SetDWORDValue(str, (*pArray)[nIdx].event_level);
 		}
 	}
-
 	regKey.Close();
 }
 
-void CDataCeneter::GetAllEventType(vector<EVENTTYPE>& vcEventType)
+void CDataCeneter::GetInterEventType(vector< pair<EVENTTYPE,wstring> >& vcEventType)
 {
-	vcEventType.push_back(MOTION_DETECTION);
-	vcEventType.push_back(DIGITAL_INPUT);
-	vcEventType.push_back(VIDEO_LOST);
-	vcEventType.push_back(VIDEO_OPEN);
-	vcEventType.push_back(REBOOT);
-	vcEventType.push_back(DIGITAL_OUTPUT);
-	vcEventType.push_back(MISSING_OBJECT);
-	vcEventType.push_back(EVENT_TRIGGER);
-	vcEventType.push_back(TRANSACTION);
-	vcEventType.push_back(DISK_FULL);
-	vcEventType.push_back(LOG_IN);
-	vcEventType.push_back(LOG_OUT);
-	vcEventType.push_back(DISCONNECT);
-	vcEventType.push_back(RECORDING_FAIL);
+	pair<EVENTTYPE,wstring> pairEvent;
+
+	pairEvent.first = MOTION_DETECTION;
+	pairEvent.second = _T("Motion Detect");
+	vcEventType.push_back(pairEvent);
+
+	pairEvent.first = DIGITAL_INPUT;
+	pairEvent.second = _T("Digital Input");
+	vcEventType.push_back(pairEvent);
+
+	pairEvent.first = VIDEO_LOST;
+	pairEvent.second = _T("Video Lost");
+	vcEventType.push_back(pairEvent);
+
+	pairEvent.first = VIDEO_OPEN;
+	pairEvent.second = _T("Video Open");
+	vcEventType.push_back(pairEvent);
+
+	pairEvent.first = REBOOT;
+	pairEvent.second = _T("REBOOT");
+	vcEventType.push_back(pairEvent);
+
+	pairEvent.first = DIGITAL_OUTPUT;
+	pairEvent.second = _T("Digital Output");
+	vcEventType.push_back(pairEvent);
+
+	pairEvent.first = MISSING_OBJECT;
+	pairEvent.second = _T("Missing Object");
+	vcEventType.push_back(pairEvent);
+
+	pairEvent.first = EVENT_TRIGGER;
+	pairEvent.second = _T("Event Trigger");
+	vcEventType.push_back(pairEvent);
+
+	pairEvent.first = TRANSACTION;
+	pairEvent.second = _T("Transaction");
+	vcEventType.push_back(pairEvent);
 }
+
+void CDataCeneter::GetIntraEventType(vector< pair<EVENTTYPE,wstring> >& vcEventType)
+{
+	pair<EVENTTYPE,wstring> pairEvent;
+
+	pairEvent.first = DISK_FULL;
+	pairEvent.second = _T("Disk Full");
+	vcEventType.push_back(pairEvent);
+
+	pairEvent.first = DISCONNECT;
+	pairEvent.second = _T("Disconnect");
+	vcEventType.push_back(pairEvent);
+
+	pairEvent.first = RECORDING_FAIL;
+	pairEvent.second = _T("Recording Status Change");
+	vcEventType.push_back(pairEvent);
+}
+
