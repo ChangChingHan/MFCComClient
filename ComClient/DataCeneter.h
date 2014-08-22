@@ -29,6 +29,8 @@ private:
 	void GetDeviceURL(int nDeviceId, LPTSTR pURL);
 	void WritetDeviceURL(int nDeviceId, CString& strURL);
 	bool IsURLAddress(CString& strAddress);
+	void GetAllEventType(vector<EVENTTYPE>& vcEventType);
+	void GetCamByMac(ec_Camera& cam, const wstring& strMac);
 
 	/************************************************************************/
 	/* define register table function                  

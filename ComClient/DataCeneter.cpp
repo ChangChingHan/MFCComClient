@@ -575,7 +575,32 @@ void CDataCeneter::QueryEventActionTbl(BYTE bOperation, LPVOID VarData)
 
 void CDataCeneter::QueryEventlogTbl(BYTE bOperation, LPVOID VarData)
 {
+	int nIdx = 0, nCount = 0;
+	CSimpleArray<eventlog> Array;
+	vector<ec_Event_Log> *pArray = NULL;
 
+	pArray = (vector<ec_Event_Log>*)VarData;
+	if (pArray && pArray->size())
+	{
+		eventlog data;
+		data.logcount = (*pArray)[0].logcount;
+		data.event_type = (*pArray)[0].event_type;
+		data.device_mac = (*pArray)[0].device.mac_address;
+		data.start_time = (*pArray)[0].start_time;
+		data.end_time = (*pArray)[0].end_time;
+		Array.Add(data);
+	}
+
+	m_dataMgr.QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
+	ec_Event_Log data;
+	nCount = Array.GetSize();
+	pArray->clear();
+	for (nIdx = 0; nIdx < nCount; nIdx++)
+	{
+		data = Array[nIdx];
+		GetCamByMac(data.device, Array[nIdx].device_mac);
+		pArray->push_back(data);
+	}
 }
 
 void CDataCeneter::QueryParamTbl(BYTE bOperation, LPVOID VarData)
@@ -637,4 +662,20 @@ bool CDataCeneter::IsURLAddress(CString& strAddress)
 		}
 	}
 	return bURLAddress;
+}
+
+void CDataCeneter::GetCamByMac(ec_Camera& cam, const wstring& strMac)
+{
+	CSimpleArray<camera> Array;
+	m_dataMgr.QueryFromDC(DATABASE,GET_CAM,(VARIANT*)&Array);
+
+	int nIdx = 0, nCount = Array.GetSize();
+	for (nIdx = 0; nIdx < nCount; nIdx++)
+	{
+		if (Array[nIdx].mac_address.compare(strMac)  == 0)
+		{
+			cam = Array[0];
+			break;
+		}
+	}
 }
