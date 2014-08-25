@@ -1,10 +1,13 @@
 #include "StdAfx.h"
 #include "DataCeneter.h"
 
-#define DEVICE_INI			_T(".\\device.ini")
-#define STRING_INI_BUFFER	128
-#define SECTION_URL			_T("URL")
-
+#define DEVICE_INI				_T(".\\device.ini")
+#define STRING_INI_BUFFER		128
+#define SECTION_URL				_T("URL")
+#define PTZ_ACTION_KEY			_T("PTZAction")
+#define PTZ_PRESET_KEY			_T("PTZPreset")
+#define EMAIL_CONTENT_KEY		_T("EmailContent")
+#define EXACUTE_FILE_KEY		_T("ExacuteFile")
 
 CDataCeneter::CDataCeneter(void)
 {
@@ -601,21 +604,36 @@ void CDataCeneter::GetEventActionDetail(vector<ec_Event_Action> *pArray)
 
 void CDataCeneter::GetEventActionDetailFromFile(ec_Event_Action& eventAction)
 {
-	switch()
+	CString strKey(_T(""));
+	strKey.Format(_T("action_%d"),eventAction.actionid);
+
+	switch(eventAction.action_type)
 	{
 	case ACTION_PTZ:
 		{
-
+			eventAction.ptz_action = (PTZ_ACTION)GetPrivateProfileInt( strKey , PTZ_ACTION_KEY , PTZ_AUTOSCAN , DEVICE_INI );
+			if (eventAction.ptz_action == PTZ_PRESET)
+			{
+				eventAction.ptz_preset = GetPrivateProfileInt( strKey , PTZ_PRESET_KEY , 0 , DEVICE_INI );
+			}
 		}
 		break;
 	case ACTION_EMAIL:
 		{
-
+			CString strValue;
+			LPTSTR pstr = strValue.GetBuffer(STRING_INI_BUFFER);
+			GetPrivateProfileString( strKey , EMAIL_CONTENT_KEY , _T("") , pstr , STRING_INI_BUFFER , DEVICE_INI );
+			eventAction.email_content = pstr;
+			strValue.ReleaseBuffer();
 		}
 		break;
 	case ACTION_CUSTOM:
 		{
-
+			CString strValue;
+			LPTSTR pstr = strValue.GetBuffer(STRING_INI_BUFFER);
+			GetPrivateProfileString( strKey , EXACUTE_FILE_KEY , _T("") , pstr , STRING_INI_BUFFER , DEVICE_INI );
+			eventAction.custom_path = pstr;
+			strValue.ReleaseBuffer();
 		}
 		break;
 	default:
