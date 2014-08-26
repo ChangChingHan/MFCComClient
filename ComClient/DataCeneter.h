@@ -36,6 +36,11 @@ private:
 	void GetEventActionDetail(vector<ec_Event_Action> *pArray);
 	void GetEventActionDetailFromFile(ec_Event_Action& eventAction);
 
+	void SetEventActionDetail(int nBeginActionId, vector<ec_Event_Action> *pArray);
+	void SetEventActionDetailIntoFile(int nActionId, ec_Event_Action& eventAction);
+
+	void WritePrivateProfileInt(const CString strSection, const CString strKey, int nValue, const CString strPath);
+
 	/************************************************************************/
 	/* define register table function                  
 	/************************************************************************/

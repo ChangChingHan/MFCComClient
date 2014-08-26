@@ -83,7 +83,7 @@ void CDataCeneter::QueryFromDC(unsigned char bDataType, unsigned char bOperation
 
 void CDataCeneter::DatabaseOperation(BYTE bOperation, LPVOID VarData)
 {
-	if (bOperation >= GET_GROUP && bOperation <= GET_EVENT_ACTION)
+	if (bOperation >= GET_GROUP && bOperation <= GET_LAST_EVENT_ACTION)
 	{
 		QueryDatabase(bOperation, VarData);
 	}
@@ -123,7 +123,7 @@ void CDataCeneter::UpdateDatabase(BYTE bOperation, void* VarData)
 
 void CDataCeneter::UpdateEventActionTbl(BYTE bOperation, void* VarData)
 {
-
+	DeleteEventActionTbl(bOperation, VarData);
 }
 
 void CDataCeneter::UpdateGroupTbl(BYTE bOperation, void* VarData)
@@ -171,7 +171,23 @@ void CDataCeneter::DeleteDatabase(BYTE bOperation, void* VarData)
 
 void CDataCeneter::DeleteEventActionTbl(BYTE bOperation, LPVOID VarData)
 {
+	CSimpleArray<eventaction> Array;
+	vector<ec_Event_Action> *pArray = NULL;
+	pArray = (vector<ec_Event_Action>*)VarData;
 
+	int nLastActionId = 0;
+	int nIdx = 0, nCount = pArray->size();
+	eventaction data;
+
+	for (nIdx = 0; nIdx < nCount; nIdx++)
+	{
+		data.actionid = (*pArray)[nIdx].actionid;
+		data.event_type = (*pArray)[nIdx].event_type;
+		data.source_mac = (*pArray)[nIdx].source_device.mac_address;
+		data.target_mac = (*pArray)[nIdx].target_device.mac_address;
+		Array.Add(data);
+	}
+	m_dataMgr.QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
 }
 
 void CDataCeneter::DeleteCamTbl(BYTE bOperation, LPVOID VarData)
@@ -245,6 +261,31 @@ void CDataCeneter::InsertDatabase(BYTE bOperation, void* VarData)
 
 void CDataCeneter::InsertEventActionTbl(BYTE bOperation, LPVOID VarData)
 {
+	CSimpleArray<eventaction> Array;
+	vector<ec_Event_Action> *pArray = NULL;
+	pArray = (vector<ec_Event_Action>*)VarData;
+
+	int nLastActionId = 0;
+	int nIdx = 0, nCount = pArray->size();
+	eventaction data;
+
+	m_dataMgr.QueryFromDC(DATABASE,GET_LAST_EVENT_ACTION,(VARIANT*)&Array);
+	if (Array.GetSize())
+	{
+		nLastActionId = Array[0].actionid;
+		Array.RemoveAll();
+	}
+
+	for (nIdx = 0; nIdx < nCount; nIdx++)
+	{
+		data.actionid = (*pArray)[nIdx].actionid;
+		data.event_type = (*pArray)[nIdx].event_type;
+		data.source_mac = (*pArray)[nIdx].source_device.mac_address;
+		data.target_mac = (*pArray)[nIdx].target_device.mac_address;
+		Array.Add(data);
+	}
+	m_dataMgr.QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
+	SetEventActionDetail(nLastActionId+1, pArray);
 }
 
 void CDataCeneter::InsertGroupCamTbl(BYTE bOperation, LPVOID VarData)
@@ -436,7 +477,7 @@ void CDataCeneter::QueryDatabase(BYTE bOperation, LPVOID VarData)
 	{
 		QueryEventlogTbl(bOperation, VarData);
 	}
-	else if (bOperation >= GET_EVENT_ACTION && bOperation <= GET_EVENT_ACTION)
+	else if (bOperation >= GET_EVENT_ACTION && bOperation <= GET_LAST_EVENT_ACTION)
 	{
 		QueryEventActionTbl(bOperation, VarData);
 	}
@@ -586,8 +627,56 @@ void CDataCeneter::QueryEventActionTbl(BYTE bOperation, LPVOID VarData)
 		data = Array[nIdx];
 		GetCamByMac(data.source_device, Array[nIdx].source_mac);
 		GetCamByMac(data.target_device, Array[nIdx].target_mac);
-
 		pArray->push_back(data);
+	}
+	GetEventActionDetail(pArray);
+}
+
+void CDataCeneter::SetEventActionDetail(int nBeginActionId, vector<ec_Event_Action> *pArray)
+{
+	int nIdx = 0, nCount = pArray->size();
+
+	for (nIdx = 0; nIdx < nCount; nIdx++)
+	{
+		SetEventActionDetailIntoFile(nBeginActionId+nIdx, (*pArray)[nIdx]);
+	}
+}
+
+void CDataCeneter::WritePrivateProfileInt(const CString strSection, const CString strKey, int nValue, const CString strPath)
+{
+	CString strValue;
+	strValue.Format(_T("%d"), nValue);
+	WritePrivateProfileString( strSection , strKey , strValue , strPath );
+}
+
+void CDataCeneter::SetEventActionDetailIntoFile(int nActionId ,ec_Event_Action& eventAction)
+{
+	CString strKey(_T(""));
+	strKey.Format(_T("action_%d"),nActionId);
+
+	switch(eventAction.action_type)
+	{
+	case ACTION_PTZ:
+		{
+			WritePrivateProfileInt( strKey , PTZ_ACTION_KEY , eventAction.ptz_action , DEVICE_INI );
+			if (eventAction.ptz_action == PTZ_PRESET)
+			{
+				WritePrivateProfileInt( strKey , PTZ_PRESET_KEY , eventAction.ptz_preset , DEVICE_INI );
+			}
+		}
+		break;
+	case ACTION_EMAIL:
+		{
+			WritePrivateProfileString(strKey, EMAIL_CONTENT_KEY, eventAction.email_content.c_str(), DEVICE_INI);
+		}
+		break;
+	case ACTION_CUSTOM:
+		{
+			WritePrivateProfileString(strKey, EXACUTE_FILE_KEY, eventAction.custom_path.c_str(), DEVICE_INI);	
+		}
+		break;
+	default:
+		break;
 	}
 }
 
