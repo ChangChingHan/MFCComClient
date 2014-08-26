@@ -83,7 +83,7 @@ void CDataCeneter::QueryFromDC(unsigned char bDataType, unsigned char bOperation
 
 void CDataCeneter::DatabaseOperation(BYTE bOperation, LPVOID VarData)
 {
-	if (bOperation >= GET_GROUP && bOperation <= GET_LAST_EVENT_ACTION)
+	if (bOperation >= GET_GROUP && bOperation <= GET_EVENT_ACTION_BY_MAC)
 	{
 		QueryDatabase(bOperation, VarData);
 	}
@@ -477,7 +477,7 @@ void CDataCeneter::QueryDatabase(BYTE bOperation, LPVOID VarData)
 	{
 		QueryEventlogTbl(bOperation, VarData);
 	}
-	else if (bOperation >= GET_EVENT_ACTION && bOperation <= GET_LAST_EVENT_ACTION)
+	else if (bOperation >= GET_EVENT_ACTION && bOperation <= GET_EVENT_ACTION_BY_MAC)
 	{
 		QueryEventActionTbl(bOperation, VarData);
 	}
@@ -618,18 +618,33 @@ void CDataCeneter::QueryEventActionTbl(BYTE bOperation, LPVOID VarData)
 	vector<ec_Event_Action> *pArray = NULL;
 	pArray = (vector<ec_Event_Action>*)VarData;
 
+	if (bOperation == GET_EVENT_ACTION_BY_MAC && pArray->size())
+	{
+		eventaction data;
+		data.actionid = (*pArray)[0].actionid;
+		data.event_type = (*pArray)[0].event_type;
+		data.source_mac = (*pArray)[0].source_device.mac_address;
+		data.target_mac = (*pArray)[0].target_device.mac_address;
+		Array.Add(data);
+	}
 	m_dataMgr.QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
+
 	int nIdx = 0, nCount = Array.GetSize();
 	ec_Event_Action data;
-
+	pArray->clear();
 	for (nIdx = 0; nIdx < nCount; nIdx++)
 	{
 		data = Array[nIdx];
-		GetCamByMac(data.source_device, Array[nIdx].source_mac);
-		GetCamByMac(data.target_device, Array[nIdx].target_mac);
+		if (bOperation == GET_EVENT_ACTION)
+		{
+			GetCamByMac(data.source_device, Array[nIdx].source_mac);
+			GetCamByMac(data.target_device, Array[nIdx].target_mac);
+		}
 		pArray->push_back(data);
 	}
-	GetEventActionDetail(pArray);
+
+	if (bOperation == GET_EVENT_ACTION)
+		GetEventActionDetail(pArray);
 }
 
 void CDataCeneter::SetEventActionDetail(int nBeginActionId, vector<ec_Event_Action> *pArray)

@@ -81,8 +81,8 @@ void CDataCeneter::GetEventType(BYTE bOperation, LPVOID VarData)
 	CRegKey regKey;
 	CString str;
 	DWORD dValue = 0;
-	strucEventColor EventColorData;
-	vector<strucEventColor> *pArray = (vector<strucEventColor>*)VarData;
+	strucEventSeverity EventSeverity;
+	vector<strucEventSeverity> *pArray = (vector<strucEventSeverity>*)VarData;
 	vector<pair<EVENTTYPE,wstring> > vcEventType;
 
 	if (bOperation == GET_INTER_EVENT || bOperation == GET_ALL_EVENT)
@@ -95,11 +95,11 @@ void CDataCeneter::GetEventType(BYTE bOperation, LPVOID VarData)
 			for (nIdx=0 ; nIdx<nCount ; nIdx++)
 			{
 				str.Format(_T("%d"),vcEventType[nIdx]);
-				if (regKey.QueryDWORDValue(str, (DWORD&)EventColorData.event_level) == ERROR_SUCCESS)
+				if (regKey.QueryDWORDValue(str, (DWORD&)EventSeverity.event_level) == ERROR_SUCCESS)
 				{
-					EventColorData.event_type = vcEventType[nIdx].first;
-					EventColorData.event_name = vcEventType[nIdx].second;
-					pArray->push_back(EventColorData);
+					EventSeverity.event_type = vcEventType[nIdx].first;
+					EventSeverity.event_name = vcEventType[nIdx].second;
+					pArray->push_back(EventSeverity);
 				}
 			}
 			regKey.Close();
@@ -113,17 +113,17 @@ void CDataCeneter::GetEventType(BYTE bOperation, LPVOID VarData)
 		int nIdx = 0, nCount = vcEventType.size();
 		for (nIdx=0 ; nIdx<nCount ; nIdx++)
 		{
-			EventColorData.event_level = EVENT_SYSTEM;
-			EventColorData.event_type = vcEventType[nIdx].first;
-			EventColorData.event_name = vcEventType[nIdx].second;
-			pArray->push_back(EventColorData);
+			EventSeverity.event_level = EVENT_SYSTEM;
+			EventSeverity.event_type = vcEventType[nIdx].first;
+			EventSeverity.event_name = vcEventType[nIdx].second;
+			pArray->push_back(EventSeverity);
 		}
 	}
 }
 
 void CDataCeneter::SetEventType(BYTE bOperation, LPVOID VarData)
 {
-	vector<strucEventColor> *pArray = (vector<strucEventColor>*)VarData;
+	vector<strucEventSeverity> *pArray = (vector<strucEventSeverity>*)VarData;
 
 	CRegKey regKey;
 	LONG lResult = ERROR_SUCCESS;
