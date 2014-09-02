@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 #include "DataCeneter.h"
+#include "CDataMgr.h"
 
 #define DEVICE_INI				_T(".\\device.ini")
 #define STRING_INI_BUFFER		128
@@ -9,9 +10,10 @@
 #define EMAIL_CONTENT_KEY		_T("EmailContent")
 #define EXACUTE_FILE_KEY		_T("ExacuteFile")
 
-CDataCeneter::CDataCeneter(void)
+CDataCeneter::CDataCeneter(void):m_pdataMgr(NULL)
 {
-	InitialDeviceIni();
+	m_pdataMgr = new CDataMgr;
+	//InitialDeviceIni();
 }
 
 CDataCeneter::~CDataCeneter(void)
@@ -22,12 +24,17 @@ CDataCeneter::~CDataCeneter(void)
 		WritetDeviceURL(it->first,it->second);
 		it++;
 	}
+
+	if (m_pdataMgr)
+	{
+		delete m_pdataMgr;
+	}
 }
 
 void CDataCeneter::InitialDeviceIni()
 {
 	CSimpleArray<camera> Array;
-	m_dataMgr.QueryFromDC(DATABASE,GET_CAM,(VARIANT*)&Array);
+	m_pdataMgr->QueryFromDC(DATABASE,GET_CAM,(VARIANT*)&Array);
 
 	CString strKey(_T(""));
 	CString strURL;
@@ -187,7 +194,7 @@ void CDataCeneter::DeleteEventActionTbl(BYTE bOperation, LPVOID VarData)
 		data.target_mac = (*pArray)[nIdx].target_device.mac_address;
 		Array.Add(data);
 	}
-	m_dataMgr.QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
+	m_pdataMgr->QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
 }
 
 void CDataCeneter::DeleteCamTbl(BYTE bOperation, LPVOID VarData)
@@ -269,7 +276,7 @@ void CDataCeneter::InsertEventActionTbl(BYTE bOperation, LPVOID VarData)
 	int nIdx = 0, nCount = pArray->size();
 	eventaction data;
 
-	m_dataMgr.QueryFromDC(DATABASE,GET_LAST_EVENT_ACTION,(VARIANT*)&Array);
+	m_pdataMgr->QueryFromDC(DATABASE,GET_LAST_EVENT_ACTION,(VARIANT*)&Array);
 	if (Array.GetSize())
 	{
 		nLastActionId = Array[0].actionid;
@@ -284,7 +291,7 @@ void CDataCeneter::InsertEventActionTbl(BYTE bOperation, LPVOID VarData)
 		data.target_mac = (*pArray)[nIdx].target_device.mac_address;
 		Array.Add(data);
 	}
-	m_dataMgr.QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
+	m_pdataMgr->QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
 	SetEventActionDetail(nLastActionId+1, pArray);
 }
 
@@ -310,7 +317,7 @@ void CDataCeneter::InsertGroupCamTbl(BYTE bOperation, LPVOID VarData)
 		Array.Add(data);
 	}
 
-	m_dataMgr.QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
+	m_pdataMgr->QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
 }
 
 void CDataCeneter::InsertRecordTbl(BYTE bOperation, LPVOID VarData)
@@ -327,7 +334,7 @@ void CDataCeneter::InsertRecordTbl(BYTE bOperation, LPVOID VarData)
 		Array.Add(data);
 	}
 
-	m_dataMgr.QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
+	m_pdataMgr->QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
 }
 
 void CDataCeneter::InsertCamTbl(BYTE bOperation, LPVOID VarData, BOOL bInserStream)
@@ -375,7 +382,7 @@ void CDataCeneter::InsertCamTbl(BYTE bOperation, LPVOID VarData, BOOL bInserStre
 		}
 
 		Array.Add(data);
-		m_dataMgr.QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
+		m_pdataMgr->QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
 		Array.RemoveAll();
 
 		if(bInserStream)
@@ -388,7 +395,7 @@ void CDataCeneter::PrepareInsertStreamTbl(vector<ec_Stream>& vcStream)
 	int nIdx = 0, nCount = vcStream.size();
 	int nCameraid = 0;
 	CSimpleArray<camera> Array;
-	m_dataMgr.QueryFromDC(DATABASE,GET_CAM,(VARIANT*)&Array);
+	m_pdataMgr->QueryFromDC(DATABASE,GET_CAM,(VARIANT*)&Array);
 	if(Array.GetSize())
 		nCameraid = Array[Array.GetSize()-1].cameraid;
 
@@ -419,7 +426,7 @@ void CDataCeneter::InsertStreamTbl(BYTE bOperation, LPVOID VarData)
 		Array.Add(data);
 	}
 
-	m_dataMgr.QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
+	m_pdataMgr->QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
 }
 
 void CDataCeneter::InsertGroupTbl(BYTE bOperation, LPVOID VarData)
@@ -440,7 +447,7 @@ void CDataCeneter::InsertGroupTbl(BYTE bOperation, LPVOID VarData)
 		Array.Add(data);
 	}
 
-	m_dataMgr.QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
+	m_pdataMgr->QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
 }
 
 void CDataCeneter::QueryDatabase(BYTE bOperation, LPVOID VarData)
@@ -487,7 +494,7 @@ void CDataCeneter::QueryGroupTbl(BYTE bOperation, LPVOID VarData)
 {
 	int nIdx = 0, nCount = 0;
 	CSimpleArray<group> Array;
-	m_dataMgr.QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
+	m_pdataMgr->QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
 
 	Cam_Group data;
 	vector<Cam_Group> *pArray = (vector<Cam_Group>*)VarData;
@@ -503,7 +510,7 @@ void CDataCeneter::QueryGroupCamTbl(BYTE bOperation, LPVOID VarData)
 {
 	int nIdx = 0, nCount = 0;
 	CSimpleArray<group_camera> Array;
-	m_dataMgr.QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
+	m_pdataMgr->QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
 
 
 	Cam_Group_Cam data;
@@ -520,7 +527,7 @@ void CDataCeneter::QueryCamTbl(BYTE bOperation, LPVOID VarData)
 {
 	int nIdx = 0, nCount = 0;
 	CSimpleArray<camera> Array;
-	m_dataMgr.QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
+	m_pdataMgr->QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
 
 	ec_Camera data;
 	vector<ec_Camera> *pArray = (vector<ec_Camera>*)VarData;
@@ -557,7 +564,7 @@ void CDataCeneter::QueryStreamTbl(BYTE bOperation, LPVOID VarData)
 			Array.Add(data);
 		}
 	}
-	m_dataMgr.QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
+	m_pdataMgr->QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
 
 	ec_Stream data;
 	pArray = (vector<ec_Stream>*)VarData;
@@ -574,7 +581,7 @@ void CDataCeneter::QueryRecordTbl(BYTE bOperation, LPVOID VarData)
 {
 	int nIdx = 0, nCount = 0;
 	CSimpleArray<video_record> Array;
-	m_dataMgr.QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
+	m_pdataMgr->QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
 
 	ec_Camera_Rec data;
 	vector<ec_Camera_Rec> *pArray = (vector<ec_Camera_Rec>*)VarData;
@@ -599,7 +606,7 @@ void CDataCeneter::QueryStorageTbl(BYTE bOperation, LPVOID VarData)
 		data.storage_type = (*pArray)[0].storage_type;
 		Array.Add(data);
 	}
-	m_dataMgr.QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
+	m_pdataMgr->QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
 
 	ec_Storage data;
 	pArray = (vector<ec_Storage>*)VarData;
@@ -627,7 +634,7 @@ void CDataCeneter::QueryEventActionTbl(BYTE bOperation, LPVOID VarData)
 		data.target_mac = (*pArray)[0].target_device.mac_address;
 		Array.Add(data);
 	}
-	m_dataMgr.QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
+	m_pdataMgr->QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
 
 	int nIdx = 0, nCount = Array.GetSize();
 	ec_Event_Action data;
@@ -647,8 +654,24 @@ void CDataCeneter::QueryEventActionTbl(BYTE bOperation, LPVOID VarData)
 		GetEventActionDetail(pArray);
 }
 
+bool CDataCeneter::CheckDeviceIni()
+{
+	bool bResult = true;
+	CFileFind findFile;
+	if (!findFile.FindFile(DEVICE_INI))
+	{
+		CFile cfile;
+		CFileException ex;
+		cfile.Open(DEVICE_INI,CFile::modeCreate, &ex);
+		cfile.Close();
+		bResult = false;
+	}
+	return bResult;
+}
+
 void CDataCeneter::SetEventActionDetail(int nBeginActionId, vector<ec_Event_Action> *pArray)
 {
+	CheckDeviceIni();
 	int nIdx = 0, nCount = pArray->size();
 
 	for (nIdx = 0; nIdx < nCount; nIdx++)
@@ -763,7 +786,7 @@ void CDataCeneter::QueryEventlogTbl(BYTE bOperation, LPVOID VarData)
 		Array.Add(data);
 	}
 
-	m_dataMgr.QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
+	m_pdataMgr->QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
 	ec_Event_Log data;
 	nCount = Array.GetSize();
 	pArray->clear();
@@ -788,7 +811,7 @@ void CDataCeneter::QueryParamTbl(BYTE bOperation, LPVOID VarData)
 		data.parm_name = (*pArray)[0].parm_name;
 		Array.Add(data);
 	}
-	m_dataMgr.QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
+	m_pdataMgr->QueryFromDC(DATABASE,bOperation,(VARIANT*)&Array);
 
 	ec_Param data;
 	pArray = (vector<ec_Param>*)VarData;
@@ -839,7 +862,7 @@ bool CDataCeneter::IsURLAddress(CString& strAddress)
 void CDataCeneter::GetCamByMac(ec_Camera& cam, const wstring& strMac)
 {
 	CSimpleArray<camera> Array;
-	m_dataMgr.QueryFromDC(DATABASE,GET_CAM,(VARIANT*)&Array);
+	m_pdataMgr->QueryFromDC(DATABASE,GET_CAM,(VARIANT*)&Array);
 
 	int nIdx = 0, nCount = Array.GetSize();
 	for (nIdx = 0; nIdx < nCount; nIdx++)

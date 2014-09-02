@@ -1,6 +1,7 @@
 // Machine generated IDispatch wrapper class(es) created with Add Class from Typelib Wizard
 
-#import "D:\\Lynn-Test\\ComObject\\ComServer\\ComServer\\Debug\\ComServer.tlb" no_namespace named_guids raw_interfaces_only
+//#import "D:\\Lynn-Test\\ComObject\\ComServer\\ComServer\\Debug\\ComServer.tlb" no_namespace named_guids raw_interfaces_only
+#import "D:\\EtroCenter\\1.2.8\Src\\ComServer\\ComServer\\Debug\\ComServer.tlb" no_namespace named_guids raw_interfaces_only
 // CDataMgr wrapper class
 
 class CDataMgr : public COleDispatchDriver

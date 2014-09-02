@@ -99,10 +99,23 @@ void CDataCeneter::GetEventType(BYTE bOperation, LPVOID VarData)
 				{
 					EventSeverity.event_type = vcEventType[nIdx].first;
 					EventSeverity.event_name = vcEventType[nIdx].second;
+					EventSeverity.event_color = RGB(0,255,0);
 					pArray->push_back(EventSeverity);
 				}
 			}
 			regKey.Close();
+		}
+		else	//default
+		{
+			int nIdx = 0, nCount = vcEventType.size();
+			for (nIdx=0 ; nIdx<nCount ; nIdx++)
+			{
+				EventSeverity.event_level = EVENT_CRITICAL;
+				EventSeverity.event_type = vcEventType[nIdx].first;
+				EventSeverity.event_name = vcEventType[nIdx].second;
+				EventSeverity.event_color = RGB(0,255,0);
+				pArray->push_back(EventSeverity);
+			}
 		}
 	}
 
@@ -116,6 +129,7 @@ void CDataCeneter::GetEventType(BYTE bOperation, LPVOID VarData)
 			EventSeverity.event_level = EVENT_SYSTEM;
 			EventSeverity.event_type = vcEventType[nIdx].first;
 			EventSeverity.event_name = vcEventType[nIdx].second;
+			EventSeverity.event_color = RGB(255,0,0);
 			pArray->push_back(EventSeverity);
 		}
 	}

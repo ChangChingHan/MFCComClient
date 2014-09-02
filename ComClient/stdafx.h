@@ -41,4 +41,6 @@
 #include <map>
 
 using namespace std;
+
+#include "GlobalDef.h"
 #include "DataStructure.h"

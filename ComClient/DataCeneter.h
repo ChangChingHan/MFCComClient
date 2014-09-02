@@ -6,8 +6,7 @@
 #define LIBAPI_STOCKCHART __declspec(dllimport)
 #endif 
 
-#include "CDataMgr.h"
-
+class CDataMgr;
 class LIBAPI_STOCKCHART CDataCeneter
 {
 public:
@@ -18,7 +17,7 @@ public:
 	~CDataCeneter(void);
 
 private:
-	CDataMgr			m_dataMgr;
+	CDataMgr			*m_pdataMgr;
 	map<int, CString>	m_mapDeviceURL;
 
 private:
@@ -40,6 +39,7 @@ private:
 	void SetEventActionDetailIntoFile(int nActionId, ec_Event_Action& eventAction);
 
 	void WritePrivateProfileInt(const CString strSection, const CString strKey, int nValue, const CString strPath);
+	bool CheckDeviceIni();
 
 	/************************************************************************/
 	/* define register table function                  

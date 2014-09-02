@@ -9,8 +9,8 @@
 			Name="Debug|Win32"
 			>
 			<DebugSettings
-				Command="D:\Lynn-Test\ComObject\ComClient\Debug\ComClient.exe"
-				WorkingDirectory=""
+				Command="..\..\..\Bin\x86\NVR.exe"
+				WorkingDirectory="..\..\..\Bin\x86"
 				CommandArguments=""
 				Attach="false"
 				DebuggerType="3"

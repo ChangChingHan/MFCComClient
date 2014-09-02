@@ -1,9 +1,9 @@
-﻿// Created by Microsoft (R) C/C++ Compiler Version 15.00.30729.01 (829f7f21).
+﻿// Created by Microsoft (R) C/C++ Compiler Version 15.00.30729.01 (b3884166).
 //
-// d:\lynn-test\comobject\comclient\comclient\debug\comserver.tlh
+// d:\etrocenter\1.2.8\src\comclient\comclient\debug\comserver.tlh
 //
-// C++ source equivalent of Win32 type library D:\\Lynn-Test\\ComObject\\ComServer\\ComServer\\Debug\\ComServer.tlb
-// compiler-generated file created 08/25/14 at 22:58:39 - DO NOT EDIT!
+// C++ source equivalent of Win32 type library D:\\EtroCenter\\1.2.8\Src\\ComServer\\ComServer\\Debug\\ComServer.tlb
+// compiler-generated file created 08/28/14 at 15:26:27 - DO NOT EDIT!
 
 #pragma once
 #pragma pack(push, 8)
