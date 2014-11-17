@@ -9,8 +9,8 @@
 			Name="Debug|Win32"
 			>
 			<DebugSettings
-				Command="..\..\..\Bin\x86\NVR.exe"
-				WorkingDirectory="..\..\..\Bin\x86"
+				Command="D:\EtroCenter\1.2.8\Bin\x86\NVR.exe"
+				WorkingDirectory="D:\EtroCenter\1.2.8\Bin\x86"
 				CommandArguments=""
 				Attach="false"
 				DebuggerType="3"

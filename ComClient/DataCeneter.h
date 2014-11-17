@@ -30,7 +30,8 @@ private:
 	bool IsURLAddress(CString& strAddress);
 	void GetInterEventType(vector< pair<EVENTTYPE,wstring> >& vcEventType);
 	void GetIntraEventType(vector< pair<EVENTTYPE,wstring> >& vcEventType);
-	void GetCamByMac(ec_Camera& cam, const wstring& strMac);
+	bool GetCamByMac(map<CString, vector<camera>>& mapCamArray, ec_Camera& cam, const wstring& strMac, DEVICETYPE deviceType, bool isNeedStream = false);
+	void PrepareCamByMac(map<CString, vector<camera>>& mapCamArray);
 
 	void GetEventActionDetail(vector<ec_Event_Action> *pArray);
 	void GetEventActionDetailFromFile(ec_Event_Action& eventAction);
@@ -40,6 +41,12 @@ private:
 
 	void WritePrivateProfileInt(const CString strSection, const CString strKey, int nValue, const CString strPath);
 	bool CheckDeviceIni();
+	CString GetRegFolder();
+	CString GetEventRegFolder();
+	COLORREF GetEventSeverityColor(EVENT_LEVEL event_level, bool bBlack = false);
+
+	void QueryGroupCamTblByGroupId(int nGroupId, vector<Cam_Group_Cam>& vcGroupCam);
+	bool PackEventlogCondition(BYTE bOperation, vector<ec_Event_Log> *pArray, CSimpleArray<eventlog>& Array);
 
 	/************************************************************************/
 	/* define register table function                  
@@ -54,6 +61,11 @@ private:
 
 	void GetEventType(BYTE bOperation, LPVOID VarData);
 	void SetEventType(BYTE bOperation, LPVOID VarData);
+
+	void GetMailServer(BYTE bOperation, LPVOID VarData);
+	void SetMailServer(BYTE bOperation, LPVOID VarData);
+	void GetRecordPath(BYTE bOperation, LPVOID VarData);
+
 	/************************************************************************/
 	/* define database function                  
 	/************************************************************************/
@@ -63,6 +75,7 @@ private:
 	void QueryGroupTbl(BYTE bOperation, LPVOID VarData);
 	void QueryGroupCamTbl(BYTE bOperation, LPVOID VarData);
 	void QueryCamTbl(BYTE bOperation, LPVOID VarData);
+	void QueryCamTblByGroupId(BYTE bOperation, LPVOID VarData);
 	void QueryStreamTbl(BYTE bOperation, LPVOID VarData);
 	void QueryRecordTbl(BYTE bOperation, LPVOID VarData);
 	void QueryStorageTbl(BYTE bOperation, LPVOID VarData);
@@ -78,6 +91,7 @@ private:
 	void InsertStreamTbl(BYTE bOperation, LPVOID VarData);
 	void InsertEventActionTbl(BYTE bOperation, LPVOID VarData);
 	void PrepareInsertStreamTbl(vector<ec_Stream>& vcStream);
+	void InsertEventLogTbl(BYTE bOperation, LPVOID VarData);
 
 	void DeleteDatabase(BYTE bOperation, void* VarData);
 	void DeleteGroupTbl(BYTE bOperation, LPVOID VarData);
@@ -91,5 +105,8 @@ private:
 	void UpdateGroupTbl(BYTE bOperation, void* VarData);
 	void UpdateGroupCamTbl(BYTE bOperation, void* VarData);
 	void UpdateCamTbl(BYTE bOperation, void* VarData);
+	void UpdateStreamTbl(BYTE bOperation, void* VarData);
 	void UpdateEventActionTbl(BYTE bOperation, void* VarData);
+
+	void FlushData();
 };

@@ -1,9 +1,9 @@
-﻿// Created by Microsoft (R) C/C++ Compiler Version 15.00.30729.01 (13da1d47).
+﻿// Created by Microsoft (R) C/C++ Compiler Version 15.00.30729.01 (02548104).
 //
 // d:\etrocenter\1.2.8\src\comclient\comclient\x64\debug\comserver.tlh
 //
-// C++ source equivalent of Win32 type library D:\\EtroCenter\\1.2.8\Src\\ComServer\\ComServer\\Debug\\ComServer.tlb
-// compiler-generated file created 09/03/14 at 14:56:19 - DO NOT EDIT!
+// C++ source equivalent of type library D:\\EtroCenter\\1.2.8\Src\\ComServer\\ComServer\\x64\\Debug\\ComServer.tlb
+// compiler-generated file created 10/31/14 at 11:26:20 - DO NOT EDIT!
 
 #pragma once
 #pragma pack(push, 8)

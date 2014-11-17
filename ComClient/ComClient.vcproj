@@ -98,7 +98,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy ..\debug\ComClient.lib  &quot;N:\Lib\x86&quot;&#x0D;&#x0A;copy .\DataCeneter.h  &quot;N:\Include&quot;&#x0D;&#x0A;copy ..\debug\ComClient.dll ..\..\..\bin\x86&#x0D;&#x0A;copy ..\debug\ComClient.dll N:\Bin\x86\ComClient"
+				CommandLine="copy ..\debug\ComClient.lib  &quot;N:\Lib\x86\debug&quot;&#x0D;&#x0A;copy .\DataCeneter.h  &quot;N:\Include&quot;&#x0D;&#x0A;copy ..\debug\ComClient.dll ..\..\..\bin\x86&#x0D;&#x0A;copy ..\debug\ComClient.dll N:\Bin\x86\debug\ComClient&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -181,7 +181,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy ..\x64\debug\ComClient.lib  &quot;N:\Lib\x64&quot;&#x0D;&#x0A;copy .\DataCeneter.h  &quot;N:\Include&quot;&#x0D;&#x0A;copy ..\x64\debug\ComClient.dll ..\..\..\bin\x64&#x0D;&#x0A;copy ..\x64\debug\ComClient.dll N:\Bin\x64\ComClient"
+				CommandLine="copy ..\x64\debug\ComClient.lib  &quot;N:\Lib\x64\debug&quot;&#x0D;&#x0A;copy .\DataCeneter.h  &quot;N:\Include&quot;&#x0D;&#x0A;copy ..\x64\debug\ComClient.dll ..\..\..\bin\x64&#x0D;&#x0A;copy ..\x64\debug\ComClient.dll N:\Bin\x64\debug\ComClient&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -190,6 +190,7 @@
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
 			UseOfMFC="2"
+			UseOfATL="2"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -264,7 +265,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy ..\Release\ComClient.lib  &quot;N:\Lib\x86&quot;&#x0D;&#x0A;copy .\DataCeneter.h  &quot;N:\Include&quot;&#x0D;&#x0A;copy ..\Release\ComClient.dll ..\..\..\bin\x86&#x0D;&#x0A;copy ..\Release\ComClient.dll N:\Bin\x86\ComClient"
+				CommandLine="copy ..\Release\ComClient.lib  &quot;N:\Lib\x86\release&quot;&#x0D;&#x0A;copy .\DataCeneter.h  &quot;N:\Include&quot;&#x0D;&#x0A;copy ..\Release\ComClient.dll ..\..\..\bin\x86&#x0D;&#x0A;copy ..\Release\ComClient.dll N:\Bin\x86\release\ComClient&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -273,6 +274,7 @@
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="2"
 			UseOfMFC="2"
+			UseOfATL="2"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -348,7 +350,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy ..\x64\Release\ComClient.lib  &quot;N:\Lib\x64&quot;&#x0D;&#x0A;copy .\DataCeneter.h  &quot;N:\Include&quot;&#x0D;&#x0A;copy ..\x64\Release\ComClient.dll ..\..\..\bin\x64&#x0D;&#x0A;copy ..\x64\Release\ComClient.dll N:\Bin\x64\ComClient"
+				CommandLine="copy ..\x64\Release\ComClient.lib  &quot;N:\Lib\x64\release&quot;&#x0D;&#x0A;copy .\DataCeneter.h  &quot;N:\Include&quot;&#x0D;&#x0A;copy ..\x64\Release\ComClient.dll ..\..\..\bin\x64&#x0D;&#x0A;copy ..\x64\Release\ComClient.dll N:\Bin\x64\release\ComClient&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
